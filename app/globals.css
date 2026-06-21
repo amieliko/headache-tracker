@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #14121a;
+  --bg2: #1e1b26;
+  --line: #2c2833;
+  --text: #eae4dc;
+  --muted: #9a92a0;
+  --faint: #5c5563;
+
+  --mild: #f0c9a0;
+  --rough: #ec9d5e;
+  --brutal: #df6f43;
+
+  --advil: #7bc09a;
+  --water: #6fa8d4;
+  --coffee: #9d8466;
+
+  --glow: #f0b27a;
+  --glow-light: #ffca8c;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg2: var(--bg2);
+  --color-line: var(--line);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+
+  --color-mild: var(--mild);
+  --color-rough: var(--rough);
+  --color-brutal: var(--brutal);
+
+  --color-advil: var(--advil);
+  --color-water: var(--water);
+  --color-coffee: var(--coffee);
+
+  --color-glow: var(--glow);
+  --color-glow-light: var(--glow-light);
+
+  --font-display: "Georgia", "Times New Roman", serif;
+  --font-ui: "Hanken Grotesk", sans-serif;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+@keyframes scaleDown {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes flash {
+  0% {
+    filter: brightness(1);
+    box-shadow: inset 0 0 0 0 currentColor;
+  }
+  15% {
+    filter: brightness(2);
+    box-shadow: inset 0 0 18px 0 currentColor;
+  }
+  100% {
+    filter: brightness(1);
+    box-shadow: inset 0 0 0 0 currentColor;
+  }
+}
+
+.tap-flash.flashing {
+  animation: flash 1.2s cubic-bezier(0.16, 0.6, 0.4, 1);
+}
+
+@keyframes phaseIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
