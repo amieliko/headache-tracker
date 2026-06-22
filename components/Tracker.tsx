@@ -16,7 +16,6 @@ import { PeriodToggle } from "./PeriodToggle";
 import { NoteField } from "./NoteField";
 import { Menu } from "./Menu";
 import { HistorySheet } from "./HistorySheet";
-import { Onboarding } from "./Onboarding";
 import type { LocalEpisode } from "@/lib/db";
 
 const ONBOARDING_KEY = "headache-tracker:onboarded";
@@ -33,7 +32,7 @@ export function Tracker() {
   const [episode, setEpisode] = useState<LocalEpisode | null>(null);
   const [loading, setLoading] = useState(true);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [dateLabel] = useState(todayLabel);
   const [phase, setPhase] = useState<Phase>("resting");
   const pendingEpisode = useRef<LocalEpisode | null>(null);
@@ -50,7 +49,7 @@ export function Tracker() {
       setLoading(false);
 
       if (!localStorage.getItem(ONBOARDING_KEY)) {
-        setShowOnboarding(true);
+        setShowHint(true);
       }
     });
   }, []);
@@ -62,6 +61,10 @@ export function Tracker() {
 
   const handleStart = useCallback(async () => {
     if (!userId || phase !== "resting") return;
+    if (showHint) {
+      localStorage.setItem(ONBOARDING_KEY, "1");
+      setShowHint(false);
+    }
     const ep = await logHeadache(userId);
     pendingEpisode.current = ep;
     emit("logged:episode-start");
@@ -70,7 +73,7 @@ export function Tracker() {
       setEpisode(pendingEpisode.current);
       setPhase("active");
     }, TRANSITION_MS / 2);
-  }, [userId, phase]);
+  }, [userId, phase, showHint]);
 
   const handleEnd = useCallback(async () => {
     if (!episode || phase !== "active") return;
@@ -82,11 +85,6 @@ export function Tracker() {
       setPhase("resting");
     }, TRANSITION_MS / 2);
   }, [episode, phase]);
-
-  const dismissOnboarding = useCallback(() => {
-    localStorage.setItem(ONBOARDING_KEY, "1");
-    setShowOnboarding(false);
-  }, []);
 
   const menuItems = [
     { label: "history", onTap: () => setHistoryOpen(true) },
@@ -131,7 +129,14 @@ export function Tracker() {
                   onEnd={handleEnd}
                 />
               ) : (
-                <Orb onTap={handleStart} />
+                <div className="flex flex-col items-center gap-4">
+                  <Orb onTap={handleStart} />
+                  {showHint && (
+                    <p className="text-faint text-xs animate-[fadeInUp_0.6s_ease-out]">
+                      press here when your headache starts
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </div>
@@ -162,7 +167,6 @@ export function Tracker() {
         onClose={() => setHistoryOpen(false)}
       />
 
-      {showOnboarding && <Onboarding onDismiss={dismissOnboarding} />}
     </>
   );
 }
